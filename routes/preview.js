@@ -18,15 +18,16 @@ const router = express.Router();
 router.get(
   '/',
   auth,
-  query('url')
-    .notEmpty().withMessage('URL é obrigatória')
-    .isURL().withMessage('URL inválida'),
-  async (req, res, next) => {
+  query('url').notEmpty().withMessage('URL é obrigatória').isURL().withMessage('URL inválida'),
+  async (req, res) => {
     try {
       // Check validation errors
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({ 
+          success: false,
+          errors: errors.array() 
+        });
       }
 
       const { url } = req.query;
