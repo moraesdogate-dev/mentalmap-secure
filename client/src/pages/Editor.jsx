@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../context/authStore'
+import AddLinkDialog from '../components/AddLinkDialog'
 import axios from 'axios'
 
 const API_URL = 'http://localhost:5000/api'
@@ -19,6 +20,7 @@ export default function Editor() {
   const [offset, setOffset] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
   const [showCardForm, setShowCardForm] = useState(false)
+  const [showLinkDialog, setShowLinkDialog] = useState(false)
   const [cardFormData, setCardFormData] = useState({
     type: 'text',
     title: '',
@@ -77,6 +79,33 @@ export default function Editor() {
     }
   }
 
+  const handleAddLinkWithPreview = async (linkData) => {
+    const newCard = {
+      type: 'link',
+      title: linkData.title,
+      url: linkData.url,
+      description: linkData.preview?.description || '',
+      imageSrc: linkData.preview?.image || '',
+      content: linkData.preview?.description || linkData.url,
+      x: Math.random() * 400 + 100,
+      y: Math.random() * 400 + 100,
+      color: '#8b5cf6'
+    }
+
+    try {
+      await axios.post(
+        `${API_URL}/mentalmap/${mapId}/cards`,
+        newCard,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      
+      setCards([...cards, newCard])
+      setShowLinkDialog(false)
+    } catch (error) {
+      console.error('Erro ao adicionar link:', error)
+    }
+  }
+
   const handleDragStart = (e, cardIndex) => {
     setDraggingCard(cardIndex)
   }
@@ -126,6 +155,13 @@ export default function Editor() {
           className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-semibold"
         >
           + Novo Card
+        </button>
+
+        <button
+          onClick={() => setShowLinkDialog(true)}
+          className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg font-semibold"
+        >
+          + Link com Preview
         </button>
         
         <div className="flex gap-2 items-center">
@@ -207,6 +243,14 @@ export default function Editor() {
         </div>
       )}
 
+      {/* Link Dialog */}
+      <AddLinkDialog
+        isOpen={showLinkDialog}
+        onClose={() => setShowLinkDialog(false)}
+        onAdd={handleAddLinkWithPreview}
+        token={token}
+      />
+
       {/* Canvas */}
       <div
         ref={canvasRef}
@@ -271,6 +315,16 @@ export default function Editor() {
             >
               <div className="font-bold truncate">{card.title}</div>
               <div className="text-xs mt-1 truncate">{card.content}</div>
+              {card.type === 'link' && card.imageSrc && (
+                <img
+                  src={card.imageSrc}
+                  alt={card.title}
+                  className="w-full h-12 object-cover mt-1 rounded"
+                  onError={(e) => {
+                    e.target.style.display = 'none'
+                  }}
+                />
+              )}
             </div>
           ))}
         </div>
