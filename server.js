@@ -85,6 +85,9 @@ app.use('/api/auth', require('./routes/auth'));
 // Rotas de mapa mental
 app.use('/api/mentalmap', require('./routes/mentalmap'));
 
+// Rotas de preview de sites
+app.use('/api/preview', require('./routes/preview'));
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.status(200).json({

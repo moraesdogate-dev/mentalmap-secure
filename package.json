@@ -6,13 +6,22 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --detectOpenHandles",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
-  "keywords": ["mentalmap", "mongodb", "jwt", "security"],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "mentalmap",
+    "mongodb",
+    "jwt",
+    "security"
+  ],
+  "author": "moraesdogate-dev",
+  "license": "MIT",
   "dependencies": {
+    "axios": "^1.17.0",
     "bcryptjs": "^2.4.3",
+    "cheerio": "^1.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
@@ -20,5 +29,9 @@
     "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "supertest": "^6.3.0"
   }
 }
