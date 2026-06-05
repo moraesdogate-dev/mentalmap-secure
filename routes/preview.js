@@ -21,7 +21,7 @@ router.get(
   query('url')
     .notEmpty().withMessage('URL é obrigatória')
     .isURL().withMessage('URL inválida'),
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       // Check validation errors
       const errors = validationResult(req);
